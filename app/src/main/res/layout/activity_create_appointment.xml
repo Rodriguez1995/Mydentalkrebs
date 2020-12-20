@@ -41,6 +41,7 @@
                 android:layout_height="wrap_content"/>
 
             <EditText
+                android:id="@+id/etDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
@@ -66,18 +67,22 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:orientation="vertical">
+
                 <RadioButton
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/type1"/>
+                    android:layout_height="31dp"
+                    android:checked="true"
+                    android:text="@string/type1" />
+
                 <RadioButton
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/type2"/>
+                    android:layout_height="31dp"
+                    android:text="@string/type2" />
+
                 <RadioButton
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/type3"/>
+                    android:layout_height="31dp"
+                    android:text="@string/type3" />
             </RadioGroup>
 
             <Button
