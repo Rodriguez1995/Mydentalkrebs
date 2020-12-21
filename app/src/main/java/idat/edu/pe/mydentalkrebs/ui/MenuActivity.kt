@@ -3,12 +3,27 @@ package idat.edu.pe.mydentalkrebs.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import idat.edu.pe.mydentalkrebs.PreferenceHelper
-import idat.edu.pe.mydentalkrebs.PreferenceHelper.set
+import idat.edu.pe.mydentalkrebs.util.PreferenceHelper
+import idat.edu.pe.mydentalkrebs.util.PreferenceHelper.set
+import idat.edu.pe.mydentalkrebs.util.PreferenceHelper.get
 import idat.edu.pe.mydentalkrebs.R
+import idat.edu.pe.mydentalkrebs.io.ApiService
+import idat.edu.pe.mydentalkrebs.util.toast
 import kotlinx.android.synthetic.main.activity_menu.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MenuActivity : AppCompatActivity() {
+
+    private val apiService by lazy {
+        ApiService.create()
+    }
+
+    private val preferences by lazy {
+        PreferenceHelper.defaultPrefs(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
@@ -24,11 +39,29 @@ class MenuActivity : AppCompatActivity() {
         }
 
         btnLogout.setOnClickListener {
+            performLogout()
             clearSessionPreference()
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
+
         }
+    }
+
+    private fun performLogout() {
+        val jwt = preferences["jwt", ""]
+        val call = apiService.postLogout("Bearer $jwt")
+        call.enqueue(object: Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                clearSessionPreference()
+
+                val intent = Intent(this@MenuActivity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                toast(t.localizedMessage)
+            }
+
+        })
     }
 
     private fun clearSessionPreference() {
@@ -38,7 +71,8 @@ class MenuActivity : AppCompatActivity() {
         editor.putBoolean("session", false)
         editor.apply()
          */
-        val preferences = PreferenceHelper.defaultPrefs(this)
-        preferences["session"] = false
+
+
+        preferences["jwt"] = ""
     }
 }

@@ -1,5 +1,6 @@
 package idat.edu.pe.mydentalkrebs.io
 
+import idat.edu.pe.mydentalkrebs.io.response.LoginResponse
 import idat.edu.pe.mydentalkrebs.model.Doctor
 import idat.edu.pe.mydentalkrebs.model.Schedule
 import idat.edu.pe.mydentalkrebs.model.Specialty
@@ -8,9 +9,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 
 interface ApiService {
@@ -22,7 +21,15 @@ interface ApiService {
     fun getDoctors(@Path("specialty") specialtyId: Int): Call<ArrayList<Doctor>>
 
     @GET("schedule/hours")
-    fun getHours(@Query("doctor_id") doctorId: Int, @Query("date") date: String): Call<Schedule>
+    fun getHours(@Query("doctor_id") doctorId: Int, @Query("date") date: String):
+            Call<Schedule>
+
+    @POST("login")
+    fun postLogin(@Query("email") email: String, @Query("password") password: String):
+            Call<LoginResponse>
+
+    @POST("logout")
+    fun postLogout(@Header("Authorization" ) authHeader: String): Call<Void>
 
     companion object Factory {
         private const val BASE_URL = "http://104.236.32.157/api/"

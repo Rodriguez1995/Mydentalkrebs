@@ -1,4 +1,4 @@
-package idat.edu.pe.mydentalkrebs
+package idat.edu.pe.mydentalkrebs.util
 
 import android.content.Context
 import android.content.SharedPreferences
