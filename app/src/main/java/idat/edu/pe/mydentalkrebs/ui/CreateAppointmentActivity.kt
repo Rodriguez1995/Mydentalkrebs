@@ -4,6 +4,7 @@ package idat.edu.pe.mydentalkrebs.ui
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.RadioButton
 import android.widget.Toast
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import idat.edu.pe.mydentalkrebs.R
 import idat.edu.pe.mydentalkrebs.io.ApiService
+import idat.edu.pe.mydentalkrebs.model.Doctor
 import idat.edu.pe.mydentalkrebs.model.Specialty
 import kotlinx.android.synthetic.main.activity_create_appointment.*
 import kotlinx.android.synthetic.main.card_view_step_one.*
@@ -68,6 +70,7 @@ class CreateAppointmentActivity : AppCompatActivity() {
         }
 
         loadSpecialties()
+        listenSpecialtyChanges()
 
         val doctorOptions = arrayOf("Doctor A", "Doctor B", "Doctor C")
         spinnerDoctors.adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, doctorOptions)
@@ -83,16 +86,41 @@ class CreateAppointmentActivity : AppCompatActivity() {
             }
 
             override fun onResponse(call: Call<ArrayList<Specialty>>, response: Response<ArrayList<Specialty>>) {
-                if (response.isSuccessful) { // Si el codigo de respuesta es entre 200 ... 300 accedemos a la respuesta
-                    val specialties = response.body() // ArrayList de Especialidades (Objetos)
-                    val specialtyOptions = ArrayList<String>() // ArrauList en cadena
-
-                    specialties?.forEach {
-                        specialtyOptions.add(it.name) // Tomamos la variable nombre de cada especialidad y guardamos en otro array en este caso specialtyOptions
-                    }
-                    spinnerSpecialties.adapter = ArrayAdapter<String>(this@CreateAppointmentActivity, android.R.layout.simple_list_item_1, specialtyOptions)
+                response.body()?.let { // Si el codigo de respuesta es entre 200 ... 300 accedemos a la respuesta
+                    val specialties = it.toMutableList() // ArrayList de Especialidades (Objetos)
+                    spinnerSpecialties.adapter = ArrayAdapter<Specialty>(this@CreateAppointmentActivity, android.R.layout.simple_list_item_1, specialties)
                 }
             }
+        })
+    }
+
+    private fun listenSpecialtyChanges() {
+        spinnerSpecialties.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(adapter: AdapterView<*>?,view: View?,position: Int,id: Long) {
+                val specialty = adapter?.getItemAtPosition(position) as Specialty
+                loadDoctors(specialty.id)
+            }
+
+            override fun onNothingSelected(adapter: AdapterView<*>?) {
+
+            }
+        }
+    }
+
+    private fun loadDoctors(specialtyId: Int) {
+        val call = apiService.getDoctors(specialtyId)
+        call.enqueue(object: Callback<ArrayList<Doctor>> {
+            override fun onResponse(call: Call<ArrayList<Doctor>>,response: Response<ArrayList<Doctor>>) {
+                response.body()?.let { // Si el codigo de respuesta es entre 200 ... 300 accedemos a la respuesta
+                    val doctors = it.toMutableList() // ArrayList de Especialidades (Objetos)
+                    spinnerDoctors.adapter = ArrayAdapter<Doctor>(this@CreateAppointmentActivity, android.R.layout.simple_list_item_1, doctors)
+                }
+            }
+
+            override fun onFailure(call: Call<ArrayList<Doctor>>, t: Throwable) {
+                Toast.makeText(this@CreateAppointmentActivity, getString(R.string.error_loading_doctors), Toast.LENGTH_SHORT).show()
+            }
+
         })
     }
 
