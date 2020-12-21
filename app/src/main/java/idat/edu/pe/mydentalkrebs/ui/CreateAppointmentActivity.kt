@@ -3,6 +3,8 @@ package idat.edu.pe.mydentalkrebs.ui
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -14,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import idat.edu.pe.mydentalkrebs.R
 import idat.edu.pe.mydentalkrebs.io.ApiService
 import idat.edu.pe.mydentalkrebs.model.Doctor
+import idat.edu.pe.mydentalkrebs.model.Schedule
 import idat.edu.pe.mydentalkrebs.model.Specialty
 import kotlinx.android.synthetic.main.activity_create_appointment.*
 import kotlinx.android.synthetic.main.card_view_step_one.*
@@ -71,9 +74,60 @@ class CreateAppointmentActivity : AppCompatActivity() {
 
         loadSpecialties()
         listenSpecialtyChanges()
+        listenDoctorAndChange()
 
-        val doctorOptions = arrayOf("Doctor A", "Doctor B", "Doctor C")
-        spinnerDoctors.adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, doctorOptions)
+    }
+
+    private fun listenDoctorAndChange() {
+        // Doctors
+        spinnerDoctors.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(adapter: AdapterView<*>?,view: View?,position: Int,id: Long) {
+                val doctor = adapter?.getItemAtPosition(position) as Doctor
+                loadHours(doctor.id, etScheduledDate.text.toString())
+            }
+
+            override fun onNothingSelected(adapter: AdapterView<*>?) {
+
+            }
+        }
+
+        // scheduled date
+        etScheduledDate.addTextChangedListener(object: TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val doctor = spinnerDoctors.selectedItem as Doctor
+                loadHours(doctor.id, etScheduledDate.text.toString())
+            }
+        })
+
+    }
+
+    private fun loadHours(doctorId: Int, date: String) {
+        var call = apiService.getHours(doctorId, date)
+        call.enqueue(object: Callback<Schedule> {
+            override fun onResponse(call: Call<Schedule>, response: Response<Schedule>) {
+                //response.body()?.let {
+                    //val schedule = it.toMutableList()
+                    //Toast.makeText(this@CreateAppointmentActivity, "morning: ${schedule?.morning?.size} , afternoon: ${schedule?.afternoon?.size}", Toast.LENGTH_SHORT).show()
+                //}
+                if (response.isSuccessful) {
+                    val schedule =response.body()
+                    Toast.makeText(this@CreateAppointmentActivity, "morning: ${schedule?.morning?.size} , afternoon: ${schedule?.afternoon?.size}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Schedule>, t: Throwable) {
+                Toast.makeText(this@CreateAppointmentActivity, getString(R.string.error_loading_hours), Toast.LENGTH_SHORT).show()
+            }
+
+        })
+       // Toast.makeText(this, "doctor: $doctorId, date: $date", Toast.LENGTH_SHORT).show()
     }
 
     private fun loadSpecialties() {
