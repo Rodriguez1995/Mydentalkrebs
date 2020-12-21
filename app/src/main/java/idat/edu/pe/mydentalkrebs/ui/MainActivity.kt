@@ -1,15 +1,15 @@
-package idat.edu.pe.mydentalkrebs
+package idat.edu.pe.mydentalkrebs.ui
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
+import idat.edu.pe.mydentalkrebs.PreferenceHelper
 import kotlinx.android.synthetic.main.activity_main.*
 import idat.edu.pe.mydentalkrebs.PreferenceHelper.get
 import idat.edu.pe.mydentalkrebs.PreferenceHelper.set
+import idat.edu.pe.mydentalkrebs.R
 
 
 class MainActivity : AppCompatActivity() {
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         tvGoToRegister.setOnClickListener {
             Toast.makeText(this, getString(R.string.please_fill_your_register_data), Toast.LENGTH_LONG).show()
 
-            val intent = Intent(this,RegisterActivity::class.java)
+            val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
     }
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun goToMenuActivity() {
-        val intent = Intent(this,MenuActivity::class.java)
+        val intent = Intent(this, MenuActivity::class.java)
         startActivity(intent)
         finish()
     }

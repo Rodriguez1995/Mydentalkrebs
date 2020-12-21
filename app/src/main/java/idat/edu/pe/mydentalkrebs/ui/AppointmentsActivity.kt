@@ -1,8 +1,9 @@
-package idat.edu.pe.mydentalkrebs
+package idat.edu.pe.mydentalkrebs.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
+import idat.edu.pe.mydentalkrebs.R
 import idat.edu.pe.mydentalkrebs.model.Appointment
 import kotlinx.android.synthetic.main.activity_appointments.*
 

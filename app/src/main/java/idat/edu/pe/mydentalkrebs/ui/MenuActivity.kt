@@ -1,10 +1,11 @@
-package idat.edu.pe.mydentalkrebs
+package idat.edu.pe.mydentalkrebs.ui
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import idat.edu.pe.mydentalkrebs.PreferenceHelper
 import idat.edu.pe.mydentalkrebs.PreferenceHelper.set
+import idat.edu.pe.mydentalkrebs.R
 import kotlinx.android.synthetic.main.activity_menu.*
 
 class MenuActivity : AppCompatActivity() {
@@ -13,18 +14,18 @@ class MenuActivity : AppCompatActivity() {
         setContentView(R.layout.activity_menu)
 
         btnCreateAppointment.setOnClickListener {
-            val intent = Intent(this,CreateAppointmentActivity::class.java)
+            val intent = Intent(this, CreateAppointmentActivity::class.java)
             startActivity(intent)
         }
 
         btnMyAppointments.setOnClickListener {
-            val intent = Intent(this,AppointmentsActivity::class.java)
+            val intent = Intent(this, AppointmentsActivity::class.java)
             startActivity(intent)
         }
 
         btnLogout.setOnClickListener {
             clearSessionPreference()
-            val intent = Intent(this,MainActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
