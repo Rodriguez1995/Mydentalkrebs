@@ -1,6 +1,7 @@
 package idat.edu.pe.mydentalkrebs.io
 
 import idat.edu.pe.mydentalkrebs.io.response.LoginResponse
+import idat.edu.pe.mydentalkrebs.model.Appointment
 import idat.edu.pe.mydentalkrebs.model.Doctor
 import idat.edu.pe.mydentalkrebs.model.Schedule
 import idat.edu.pe.mydentalkrebs.model.Specialty
@@ -30,6 +31,10 @@ interface ApiService {
 
     @POST("logout")
     fun postLogout(@Header("Authorization" ) authHeader: String): Call<Void>
+
+    @GET("appointments")
+    fun getAppointments(@Header("Authorization" ) authHeader: String):
+            Call<ArrayList<Appointment>>
 
     companion object Factory {
         private const val BASE_URL = "http://104.236.32.157/api/"
